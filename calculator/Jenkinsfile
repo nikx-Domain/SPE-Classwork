@@ -2,17 +2,17 @@ pipeline {
     agent any
 
     environment {
-        // Variables used throughout the pipeline [cite: 206, 212]
+        // Variables for your specific project
         DOCKER_IMAGE_NAME = 'calculator'
-        GITHUB_REPO_URL = 'https://github.com/nikx-Domain/SPE-Classwork.git'
-        DOCKER_HUB_USER = 'nikxdomain' 
+        GITHUB_REPO_URL   = 'https://github.com/nikx-Domain/SPE-Classwork.git'
+        DOCKER_HUB_USER   = 'nikxdomain'
     }
 
     stages {
         stage('Checkout') {
             steps {
                 script {
-                    // Clone the code from GitHub [cite: 217, 224]
+                    // Pull the latest code from your main branch
                     git branch: 'main', url: "${GITHUB_REPO_URL}"
                 }
             }
@@ -21,7 +21,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Navigate to folder and build the image [cite: 228, 231]
+                    // Navigate to the folder containing your Dockerfile
                     dir('calculator') {
                         sh "docker build -t ${DOCKER_IMAGE_NAME} ."
                     }
@@ -32,7 +32,7 @@ pipeline {
         stage('Push Docker Images') {
             steps {
                 script {
-                    // Tag and push to Docker Hub using stored credentials [cite: 233, 236-237]
+                    // Authenticate and push to Docker Hub using Global ID
                     docker.withRegistry('', 'DockerHubCred') {
                         sh "docker tag ${DOCKER_IMAGE_NAME} ${DOCKER_HUB_USER}/${DOCKER_IMAGE_NAME}:latest"
                         sh "docker push ${DOCKER_HUB_USER}/${DOCKER_IMAGE_NAME}:latest"
@@ -44,15 +44,28 @@ pipeline {
         stage('Run Ansible Playbook') {
             steps {
                 script {
-                    // Deploy to the VM using Ansible [cite: 239, 250]
+                    // Deploy to the VM using the Ansible plugin and VM credentials
                     dir('calculator') {
                         ansiblePlaybook(
                             playbook: 'deploy.yml',
-                            inventory: 'inventory'
+                            inventory: 'inventory',
+                            credentialsId: 'localhost' // Uses your VM user (iiitb) login
                         )
                     }
                 }
             }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline execution complete.'
+        }
+        success {
+            echo 'Calculator deployed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed. Please check the Console Output for errors.'
         }
     }
 }
