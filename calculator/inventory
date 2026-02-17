@@ -1,1 +1,1 @@
-172.16.180.125 ansible_user=iiitb ansible_ssh_pass=your_vm_password ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+172.16.180.125 ansible_user=iiitb ansible_ssh_pass=1208 ansible_ssh_common_args='-o StrictHostKeyChecking=no'
