@@ -1,6 +1,6 @@
 ---
 - name: Deploy Calculator Container
-  hosts: localhost
+  hosts: 172.16.180.125
   become: false
   tasks:
     - name: Pull Docker Image
