@@ -7,12 +7,14 @@
       docker_image:
         name: "nikxdomain/calculator"
         source: pull
-      [cite_start]register: docker_pull_result [cite: 161-165]
+      register: docker_pull_result
 
     - name: Ensure Docker service is running
       service:
         name: docker
-        [cite_start]state: started [cite: 168-171]
+        state: started
 
     - name: Run Calculator Container
-      [cite_start]shell: docker run -it -d --name calculator nikxdomain/calculator [cite: 172-173]
+      shell: docker run -it -d --name calculator nikxdomain/calculator
+
+
